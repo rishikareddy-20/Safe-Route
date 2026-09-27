@@ -1,0 +1,17 @@
+# Backend + pipeline runtime deps.
+# NOTE: osmnx / geopandas / lightgbm are best installed via conda-forge
+# (see environment.yml / SETUP.md). This file is provided for pip-only setups.
+osmnx>=1.9
+geopandas>=0.14
+networkx>=3.2
+lightgbm>=4.0
+scikit-learn>=1.3
+pandas>=2.0
+numpy>=1.26
+pyarrow>=14.0
+fastapi>=0.110
+uvicorn[standard]>=0.27
+sodapy>=2.2
+requests>=2.31
+python-dotenv>=1.0
+pytest>=8.0
