@@ -105,6 +105,17 @@ button:disabled { opacity: 0.6; cursor: default; }
   font-size: 13px;
 }
 
+.notice {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #fcd9a0;
+}
+
 .health {
   margin-top: 16px;
   font-size: 12px;

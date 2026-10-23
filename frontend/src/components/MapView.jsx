@@ -58,6 +58,16 @@ export default function MapView({ origin, destination, routes, risk, onMapClick 
     []
   );
 
+  // The route's actual endpoints (after snapping to the nearest graph node).
+  const routeStart = routes.length ? routes[0].geometry[0] : null;
+  const routeEnd = routes.length
+    ? routes[0].geometry[routes[0].geometry.length - 1]
+    : null;
+  // Place the Start/End pins on the route endpoints once we have a route, so the
+  // line always visibly connects to them; before routing, use the raw click.
+  const startPos = routeStart || (origin ? [origin.lat, origin.lng] : null);
+  const endPos = routeEnd || (destination ? [destination.lat, destination.lng] : null);
+
   // Draw fastest last so it sits on top; keep a stable order otherwise.
   const ordered = [...routes].sort((a, b) =>
     a.label === "fastest" ? 1 : b.label === "fastest" ? -1 : 0
@@ -73,13 +83,17 @@ export default function MapView({ origin, destination, routes, risk, onMapClick 
       className="map"
     >
       <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
+        attribution="&copy; OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <ClickHandler onMapClick={onMapClick} />
 
       {risk && (
-        <GeoJSON key={JSON.stringify(risk).length} data={risk} style={riskStyle} />
+        <GeoJSON
+          key={JSON.stringify(risk).length}
+          data={risk}
+          style={riskStyle}
+        />
       )}
 
       {ordered.map((r) => (
@@ -99,18 +113,32 @@ export default function MapView({ origin, destination, routes, risk, onMapClick 
         </Polyline>
       ))}
 
-      {origin && (
+      {/* Dashed connectors from the raw click to where the route actually snapped. */}
+      {origin && routeStart && (
+        <Polyline
+          positions={[[origin.lat, origin.lng], routeStart]}
+          pathOptions={{ color: "#ff2d95", weight: 3, dashArray: "6 6" }}
+        />
+      )}
+      {destination && routeEnd && (
+        <Polyline
+          positions={[[destination.lat, destination.lng], routeEnd]}
+          pathOptions={{ color: "#ff2d95", weight: 3, dashArray: "6 6" }}
+        />
+      )}
+
+      {startPos && (
         <CircleMarker
-          center={[origin.lat, origin.lng]}
+          center={startPos}
           radius={9}
           pathOptions={{ color: "#111", fillColor: "#4caf50", fillOpacity: 1 }}
         >
           <Tooltip permanent>Start</Tooltip>
         </CircleMarker>
       )}
-      {destination && (
+      {endPos && (
         <CircleMarker
-          center={[destination.lat, destination.lng]}
+          center={endPos}
           radius={9}
           pathOptions={{ color: "#111", fillColor: "#f44336", fillOpacity: 1 }}
         >
